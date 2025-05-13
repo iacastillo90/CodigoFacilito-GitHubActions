@@ -1,0 +1,17 @@
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+    test-build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Crear y mostrar archivo
+              run: |
+                echo "Hola Mundo" > file.txt
+                cat file.txt
+            - name: ls
+              run: |
+                chmod +x script.sh
+                ./script.sh
+
