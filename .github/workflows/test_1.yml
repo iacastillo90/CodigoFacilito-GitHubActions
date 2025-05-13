@@ -8,11 +8,17 @@ jobs:
     steps:
       - name: Saludo
         run: echo "Hola Mundo"
-      - name: Saludo 2
-        run: echo "Hola Mundo 2"
-      - name: Saludo 3
-        run: echo "Hola Mundo 3"
-      - name: Saludo 4
-        run: echo "Hola Mundo 4"
+      - name: touch file
+        run: touch file.txt
+      - name: Set text
+        run: echo "Hola Mundo 2" > file.txt
+      - name: Read file
+        run: cat file.txt
       - name: Saludo 5
         run: echo "Hola Mundo 5"
+
+  other:
+    runs-on: ubuntu-latest
+    steps:
+      - name: LS
+        run: ls -al
