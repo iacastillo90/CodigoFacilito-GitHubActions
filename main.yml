@@ -1,0 +1,45 @@
+name: Test Composite Action
+
+on: [push]
+
+jobs:
+  local-action:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SetUp
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ip >> ~/.ssh/known_hosts
+
+      - name: Ls ssh
+        run: ssh oracle@ip "ls -al"
+
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.0.3
+        if: success()
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /home/oracle/actions
+            git pull origin main
+
+      - name: Notification
+        user: rtCamp/action-slack-notify@v2.1.1
+        if: success()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+          SLACK_USERNAME: ${{ secrets.SLACK_USERNAME }}
+          SLACK_ICON_EMOJI: ${{ secrets.SLACK_ICON_EMOJI }}
+          SLACK_MESSAGE: "Composite Action executed successfully"
+        with: 
+          author_name: "Action"
+          fields: repo,message,commit,author,action,eventName
+
+
